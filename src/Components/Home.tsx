@@ -22,11 +22,12 @@ export default function Home() {
     productType: string;
   }
 
-  let newProductList: any = [];
   const [productList, setProductList] = useState<Product[]>([]);
   const [newproductList, setNewProductList]: any = useState([])
-  const [filterStatus, setFilterStatus] = React.useState(false)
-  const [sortStatus, setSortStatus] = React.useState(false);
+  const [filterStatus, setFilterStatus] = React.useState(true)
+  const [sortStatus, setSortStatus] = React.useState(true);
+  const [sort, setSort] = useState('');
+  const [type, setType] = useState('');
 
   useEffect(() => {
     async function ProductList() {
@@ -34,39 +35,61 @@ export default function Home() {
         .then(response => {
           setProductList(response.data);
         })
-        .then(()=>{
-          newProductList = productList.filter((val: any, id: any) => {
-            return productList.indexOf(val) == id;
-          });
-          setNewProductList(newProductList);
-          console.log(newProductList);
-          
-        })
     }
     ProductList();
   }, []);
 
+  useEffect(() => {
+    productList.map((item: any) => {
+      if (!newproductList.includes(item.productType)) {
+        setNewProductList([...newproductList, item.productType]);
+      }
+    });
+  });
+
+  console.log(newproductList);
+
   const handleSort = (event: React.MouseEvent<HTMLButtonElement>) => {
-    axios.get('http://localhost:8080/products/productPrice/asc')
-      .then(response => {
-        setProductList(response.data);
-      })
+    setSort('asc');
+    if (type == '') {
+      axios.get('http://localhost:8080/products/all?sort=asc')
+        .then(response => {
+          setProductList(response.data);
+        })
+    }
+    else {
+      axios.get('http://localhost:8080/products/all?sort=asc&type=' + type)
+        .then(response => {
+          setProductList(response.data);
+        })
+    }
   };
 
   const changeSort = (event: React.MouseEvent<HTMLButtonElement>) => {
-    axios.get('http://localhost:8080/products/productPrice/desc')
-      .then(response => {
-        setProductList(response.data);
-      })
+    setSort('desc');
+    if (type == '') {
+      axios.get('http://localhost:8080/products/all?sort=desc')
+        .then(response => {
+          setProductList(response.data);
+        })
+    }
+    else {
+      axios.get('http://localhost:8080/products/all?sort=desc&type=' + type)
+        .then(response => {
+          setProductList(response.data);
+        })
+    }
   };
 
   const handleChange = (value: any) => {
     if (value != null) {
-      axios.get('http://localhost:8080/products/all?productType=' + value)
+      setType(value)
+      axios.get('http://localhost:8080/products/all?type=' + value)
         .then(response => {
           setProductList(response.data);
         })
     } else {
+      setType('')
       axios.get('http://localhost:8080/products/all')
         .then(response => {
           setProductList(response.data);
@@ -93,41 +116,12 @@ export default function Home() {
             <Autocomplete
               disablePortal
               id="combo-box-demo"
-              options={productList.map((item: any) => (
-                item.productType
-              ))}
+              options={newproductList.map((item: any) => (item))}
               onChange={(event, value) => handleChange(value)}
               sx={{ width: 200 }}
               renderInput={(params) => <TextField {...params} label="Select Product Type" />}
             />
           </Container>}
-          <IconButton
-            onClick={() => {
-              setSortStatus(!sortStatus);
-            }}
-          >
-            <SortIcon />
-          </IconButton>
-          {
-            sortStatus && (
-              <Container>
-                <Grid>
-                  <Button onClick={handleSort}>
-                    <CurrencyRupeeIcon />
-                    Low to High
-                    <Grid></Grid>
-                  </Button>
-                </Grid>
-                <Grid>
-                  <Button onClick={changeSort}>
-                    <CurrencyRupeeIcon />
-                    High to Low
-                    <Grid></Grid>
-                  </Button>
-                </Grid>
-              </Container>
-            )
-          }
         </Box>
         <Box
           component="main"
@@ -139,6 +133,33 @@ export default function Home() {
             backgroundColor: ColorConfig.mainBg
           }}
         >
+          <Container sx={{ display: "flex" }}>
+            <IconButton
+              onClick={() => {
+                setSortStatus(!sortStatus);
+              }}
+            >
+              <SortIcon />
+            </IconButton>
+            {
+              sortStatus && (
+                <Grid sx={{ display: "flex" }}>
+                  <Grid marginLeft="9rem">
+                    <Button onClick={handleSort}>
+                      <CurrencyRupeeIcon />
+                      Low to High
+                    </Button>
+                  </Grid>
+                  <Grid marginLeft="10rem">
+                    <Button onClick={changeSort}>
+                      <CurrencyRupeeIcon />
+                      High to Low
+                    </Button>
+                  </Grid>
+                </Grid>
+              )
+            }
+          </Container>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, width: 850 }}>
             <ImageList sx={{ width: 1600 }} cols={3} rowHeight={160}>
               {productList.map((product: any) => (
