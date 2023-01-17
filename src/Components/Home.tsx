@@ -11,6 +11,7 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import Autocomplete from '@mui/material/Autocomplete';
 import SortIcon from "@mui/icons-material/Sort";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
+import AddIcon from '@mui/icons-material/Add';
 import Navbar from './Navbar';
 
 export default function Home() {
@@ -98,8 +99,9 @@ export default function Home() {
   };
 
   return (
-    <Container sx={{ width: 1400 }}>
+   <>
       <Navbar />
+      <Container sx={{ width: 1500 }}>
       <Box sx={{ display: "flex" }}>
         <Box
           component="nav"
@@ -122,6 +124,7 @@ export default function Home() {
               renderInput={(params) => <TextField {...params} label="Select Product Type" />}
             />
           </Container>}
+          <Button sx={{marginTop: 10}}><AddIcon/>Add Product</Button>
         </Box>
         <Box
           component="main"
@@ -189,6 +192,7 @@ export default function Home() {
         </Box>
       </Box>
     </Container >
+    </>
   );
 }
 
