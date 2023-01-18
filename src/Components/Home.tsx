@@ -124,7 +124,7 @@ export default function Home() {
               renderInput={(params) => <TextField {...params} label="Select Product Type" />}
             />
           </Container>}
-          <Button sx={{marginTop: 10}}><AddIcon/>Add Product</Button>
+          {/* <Button sx={{marginTop: 10}}><AddIcon/>Add Product</Button> */}
         </Box>
         <Box
           component="main"
